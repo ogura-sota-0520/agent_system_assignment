@@ -76,8 +76,8 @@ items:
             dynamicsMode: "Forward dynamics"
             integrationMode: "Runge Kutta"
             gravity: [ 0, 0, -9.80665 ]
-            min_friction_coefficient: 0
-            max_friction_coefficient: 100
+            min_friction_coefficient: 0 # 0
+            max_friction_coefficient: 100 # 100
             cullingThresh: 0.005
             contactCullingDepth: 0.05
             errorCriterion: 0.001

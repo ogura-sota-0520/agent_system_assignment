@@ -2,6 +2,7 @@
 #include <cnoid/SimpleController>
 #include <cnoid/ValueTree>
 #include <cnoid/YAMLReader>
+#include <cnoid/EigenUtil>
 
 #include <torch/torch.h>
 #include <torch/script.h>
@@ -52,11 +53,11 @@ class Go2InferenceController : public SimpleController
     Vector2d ang_vel_range;
     size_t resample_interval_steps;
     size_t step_count = 0;
-    
+
     // 安全機能用変数
     bool emergency_stop = false;
     Vector3d previous_position = Vector3d::Zero();
-    double max_tilt_angle = 0.5;  // 最大傾斜角度（ラジアン）
+    double max_tilt_angle = 0.5; // 最大傾斜角度（ラジアン）
 
     // 乱数生成器
     std::mt19937 rng;
@@ -108,7 +109,8 @@ public:
         // find the cfgs file
         // 設定ファイルcfgs.yamlの読み込み
         // ${HOME}/genesis_ws/logs/go2-walking/inference_tutorial/cfgs.yaml
-        fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/inference_target");
+        fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/sub2_com_fric0.2-1.8_kp18-30_kv0.7-1.2_rotI0.01-0.15_iter200");
+        // fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/sub2_com_iter300");
         fs::path cfgs_path = inference_target_path / fs::path("cfgs.yaml");
         if (!fs::exists(cfgs_path))
         {
@@ -128,10 +130,20 @@ public:
         // env_cfg
         P_gain = env_cfg->get("kp", 20);
         D_gain = env_cfg->get("kd", 0.5);
-        
-        // 安全性重視でゲインを若干下げる
-        P_gain *= 0.8;  // 20% 下げる
-        D_gain *= 1.2;  // ダンピングを20% 上げる
+
+        P_gain = env_cfg->get("kp", 24);
+        D_gain = env_cfg->get("kd", 0.95);
+
+        // 学習データの範囲に合わせて調整
+        // 学習データ: kp=18-30, kv=0.7-1.2
+        if (P_gain < 18.0)
+            P_gain = 18.0;
+        if (P_gain > 30.0)
+            P_gain = 30.0;
+        if (D_gain < 0.7)
+            D_gain = 0.7;
+        if (D_gain > 1.2)
+            D_gain = 1.2;
 
         resample_interval_steps = static_cast<int>(std::round(env_cfg->get("resampling_time_s", 4.0) / dt));
 
@@ -287,46 +299,48 @@ public:
 
         // commandの値を段階的に増加（安定性重視）
         // command[0] = command_velocity.linear.x;
-        static double target_speed = 0.1;  // 初期速度を低く設定
-        static size_t speed_increase_counter = 0;
-        
+        static double target_speed = 0.1; // 初期速度を低く設定
+
         // 5秒(5000ステップ)毎に速度を少しずつ上げる
-        if (step_count > 0 && step_count % 5000 == 0 && target_speed < 0.3) {
-            target_speed += 0.05;  // 0.05m/sずつ増加
-            speed_increase_counter++;
+        if (step_count > 0 && step_count % 1000 == 0 && target_speed < 0.3)
+        {
+            target_speed += 0.05; // 0.05m/sずつ増加
         }
-        
+
         command[0] = target_speed;
         command[1] = command_velocity.linear.y;
         command[2] = command_velocity.angular.z;
-        
+
         // 安全機能：姿勢監視
         const auto rootLink = ioBody->rootLink();
         const Isometry3d root_coord = rootLink->T();
-        
+
         // 傾斜角度チェック（ロール・ピッチ）
         Vector3d rpy = rpyFromRot(root_coord.linear());
-        if (abs(rpy[0]) > max_tilt_angle || abs(rpy[1]) > max_tilt_angle) {
+        if (abs(rpy[0]) > max_tilt_angle || abs(rpy[1]) > max_tilt_angle)
+        {
             emergency_stop = true;
             target_speed = 0.0;
             std::cout << "Emergency stop: Excessive tilt detected! Roll: " << rpy[0] << ", Pitch: " << rpy[1] << std::endl;
         }
-        
+
         // 高さチェック
         double current_height = root_coord.translation().z();
-        if (current_height < 0.15) {  // 地面から15cm以下
+        if (current_height < 0.15)
+        { // 地面から15cm以下
             emergency_stop = true;
             target_speed = 0.0;
             std::cout << "Emergency stop: Robot too low! Height: " << current_height << std::endl;
         }
-        
+
         // 緊急停止時は速度を0に
-        if (emergency_stop) {
+        if (emergency_stop)
+        {
             command[0] = 0.0;
             command[1] = 0.0;
             command[2] = 0.0;
         }
-        
+
         std::cout << "command velocity:" << command.transpose() << std::endl;
 
         // get current states
