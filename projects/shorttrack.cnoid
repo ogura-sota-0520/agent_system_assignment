@@ -136,7 +136,7 @@ items:
           data:
             file: "../model/go2.urdf"
             format: URDF
-            rootPosition: [ 0, 0, 0.419999987 ]
+            rootPosition: [ 0, 0.5, 0.419999987 ]
             rootAttitude: [
               1, 0, 0,
               0, 1, 0,
