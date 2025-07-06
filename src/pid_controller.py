@@ -148,7 +148,7 @@ class PIDController:
         # Twist メッセージを作成
         twist = Twist()
         # 旋回速度を[-0.3, 0.3]の範囲に制限
-        angular_z = -control_output  # 負号で方向を調整
+        angular_z = control_output  # 負号で方向を調整
         twist.angular.z = max(-0.3, min(0.3, angular_z))
 
         # 次回計算のために現在の誤差を保存

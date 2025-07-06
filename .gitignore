@@ -1,2 +1,6 @@
-projects/vnoid_sample_project_log
 *.pyc
+__pychache__
+
+# Ignore shorttrack project files
+projects/shorttrack
+projects/shorttrack-log/shorttrack

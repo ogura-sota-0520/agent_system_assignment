@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="agent_system_assignment" name="pid_controller" type="pid_controller.py"
+        output="screen" launch-prefix="xterm -e"/>
+    <node pkg="choreonoid_ros" name="choreonoid" type="choreonoid"
+        args="$(find agent_system_assignment)/projects/shorttrack.cnoid --start-simulation">
+    </node>
+</launch>

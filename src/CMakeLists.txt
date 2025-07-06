@@ -5,3 +5,5 @@ choreonoid_add_simple_controller(Go2InferenceController Go2InferenceController.c
 target_link_libraries(Go2InferenceController ${roscpp_LIBRARIES})
 target_link_libraries(Go2InferenceController ${CHOREONOID_BASE_LIBRARIES} "${TORCH_LIBRARIES}")
 set_property(TARGET Go2InferenceController PROPERTY CXX_STANDARD 17)
+add_cnoid_simple_controller(ShorttrackController  ShorttrackController.cpp)
+target_link_libraries(ShorttrackController ${CHOREONOID_BASE_LIBRARIES})
