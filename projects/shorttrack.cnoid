@@ -59,7 +59,6 @@ items:
               data:
                 isNoDelayMode: false
                 controllerOptions: ""
-                # controller: "vnoid_shorttrack_controller"
                 controller: "ShorttrackController"
                 base_directory: "Controller directory"
                 reloading: false
@@ -144,7 +143,7 @@ items:
             jointDisplacements: [
               0, 45, -85, 0, 45, -85, 0, 45, -85, 0,
               45, -85 ]
-            initialRootPosition: [ 0, 0, 0.42 ]
+            initialRootPosition: [ 0, 0.5, 0.42 ]
             initialRootAttitude: [
               1, 0, 0,
               0, 1, 0,

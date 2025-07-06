@@ -301,7 +301,7 @@ public:
         // command[0] = command_velocity.linear.x;
         static double target_speed = 0.1; // 初期速度を低く設定
 
-        // 5秒(5000ステップ)毎に速度を少しずつ上げる
+        // 1秒(1000ステップ)毎に速度を少しずつ上げる
         if (step_count > 0 && step_count % 1000 == 0 && target_speed < 0.3)
         {
             target_speed += 0.05; // 0.05m/sずつ増加

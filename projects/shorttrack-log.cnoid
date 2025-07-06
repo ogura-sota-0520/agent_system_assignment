@@ -77,7 +77,7 @@ items:
           data:
             file: "shorttrack-log/go2_description/go2_description.body"
             format: CHOREONOID-BODY
-            rootPosition: [ 0, 0, 0.419999987 ]
+            rootPosition: [ 0, 0.5, 0.419999987 ]
             rootAttitude: [
               1, 0, 0,
               0, 1, 0,
@@ -88,7 +88,7 @@ items:
             initialJointDisplacements: [
               0, 45, -85, 0, 45, -85, 0, 45, -85, 0,
               45, -85 ]
-            initialRootPosition: [ 0, 0, 0.42 ]
+            initialRootPosition: [ 0, 0.5, 0.42 ]
             initialRootAttitude: [
               1, 0, 0,
               0, 1, 0,
