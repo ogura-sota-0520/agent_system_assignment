@@ -29,16 +29,20 @@ items:
               1, 0, 0,
               0, 1, 0,
               0, 0, 1 ]
-            jointPositions: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            jointDisplacements: [
+              -8.49793e-322, -8.49793e-322, -8.49793e-322, -5.72958, -8.49793e-322, 0, 0, -8.49793e-322, -5.72958, -5.16135e-265,
+              -8.49793e-322, -5.16135e-265, -5.72958, -8.49793e-322, -2.71705e-57, -5.72958, -2.31436e-05, -3.74482e-161, -2.31436e-05, -5.72955,
+              -3.18981e-109, -2.11994, -2.11997, -2.11994, -5.72955, -2.11994, -6.10002e-21, -1.03085e-41, -0.233054, -2.77773,
+              -0.00655185, -2.35054, -0.236918, -0.0907581, -0.000583312 ]
             initialRootPosition: [ 0, 0, 0 ]
             initialRootAttitude: [
               1, 0, 0,
               0, 1, 0,
               0, 0, 1 ]
-            staticModel: false
+            fix_root: true
             collisionDetection: true
             selfCollisionDetection: false
-            location_editable: false
+            lock_location: true
             scene_sensitive: true
             zmp: [ 0, 0, 0 ]
           children:
@@ -60,24 +64,24 @@ items:
           plugin: Body
           class: AISTSimulatorItem
           data:
-            timeStep: 0.001
-            realtimeSync: true
-            recording: "full"
-            timeRangeMode: "Unlimited"
-            timeLength: 180
-            active_control_time_range_mode: false
-            allLinkPositionOutputMode: true
-            deviceStateOutput: true
-            controllerThreads: true
-            recordCollisionData: false
-            controllerOptions: ""
-            scene_view_edit_mode_blocking: false
-            time_sync_items: [ 4, 10 ]
+            time_step: 0.001
+            realtime_sync_mode: compensatory
+            recording: full
+            time_range_mode: unlimited
+            time_length: 180
+            is_active_control_time_range_mode: false
+            output_all_link_positions: true
+            output_device_states: true
+            use_controller_threads: true
+            record_collision_data: false
+            controller_options: ""
+            block_scene_view_edit_mode: false
+            time_sync_items: [ 4, 11 ]
             dynamicsMode: "Forward dynamics"
-            integrationMode: "Runge Kutta"
+            integrationMode: runge-kutta
             gravity: [ 0, 0, -9.80665 ]
-            min_friction_coefficient: 0 # 0
-            max_friction_coefficient: 100 # 100
+            min_friction_coefficient: 0
+            max_friction_coefficient: 100
             cullingThresh: 0.005
             contactCullingDepth: 0.05
             errorCriterion: 0.001
@@ -103,7 +107,6 @@ items:
               name: "GLVisionSimulator"
               plugin: Body
               class: GLVisionSimulatorItem
-              is_selected: true
               is_checked: true
               data:
                 enabled: true
@@ -125,7 +128,7 @@ items:
           class: BodyItem
           is_checked: true
           data:
-            file: "${HOME}/genesis_ws/Genesis/genesis/assets/urdf/go2/urdf/go2.urdf"
+            file: "../model/go2.urdf"
             format: URDF
             rootPosition: [ 0, 0, 0.42 ]
             rootAttitude: [
@@ -152,7 +155,6 @@ items:
               name: "InferenceController"
               plugin: Body
               class: SimpleControllerItem
-              is_selected: true
               data:
                 isNoDelayMode: false
                 controllerOptions: ""
@@ -160,6 +162,14 @@ items:
                 base_directory: "Controller directory"
                 reloading: false
                 export_symbols: false
+            -
+              id: 10
+              name: "BodyPublisher"
+              plugin: ROS
+              class: BodyPublisherItem
+              is_selected: true
+              data:
+                max_publishing_rate: 30
 views:
   -
     id: 0
@@ -177,7 +187,7 @@ views:
     class: ItemTreeView
     mounted: true
     state:
-      expanded: [ 1, 3, 5, 8, 9, 11 ]
+      expanded: [ 1, 3, 5, 8, 9 ]
   -
     id: 3
     plugin: Base
@@ -254,24 +264,29 @@ views:
       cameras:
         -
           camera: [ System, Perspective ]
-          eye: [ 0.582904, -6.79466, 1.27767 ]
-          direction: [ 0.283739, 0.944183, -0.167364 ]
-          up: [ 0.0481671, 0.160283, 0.985895 ]
+          eye: [ 7.13767, -8.6099, 2.56746 ]
+          direction: [ 0.293166, 0.941298, -0.167364 ]
+          up: [ 0.0497675, 0.159793, 0.985895 ]
         -
           camera: [ System, Orthographic ]
           isCurrent: true
-          orthoHeight: 3.47548
-      lightingMode: normal
-      cullingMode: enabled
-      worldLight: true
-      worldLightIntensity: 0.5
-      worldLightAmbient: 0.3
-      defaultHeadLight: true
-      defaultHeadLightIntensity: 0.75
+          orthoHeight: 9.44733
+      lighting_mode: normal
+      culling_mode: enabled
+      shading_mode: smooth
+      world_light: true
+      world_light_intensity: 0.5
+      ambient_light: true
+      ambient_light_intensity: 0.3
+      head_light: true
+      head_light_intensity: 0.75
       world_light_shadow: true
-      backgroundColor: [ 0.5, 0.666667, 0.5 ]
-      lineWidth: 1
-      pointSize: 1
+      shadow_lights:
+        - { index: 0, enabled: false }
+        - { index: 1, enabled: false }
+      background_color: [ 0.5, 0.666667, 0.5 ]
+      line_width: 1
+      point_size: 1
       field_of_view: 40
       clip_distances: [ 0.04, 200 ]
       floorGrid: false
@@ -315,7 +330,6 @@ views:
     class: JointDisplacementView
     mounted: true
     state:
-      show_selected_joints: false
       show_joint_ids: true
       show_joint_names: false
       overlap_joint_names: false
@@ -323,6 +337,7 @@ views:
       show_dials: false
       show_phases: true
       limit_ranges: false
+      show_selected_joints: false
   -
     id: 13
     plugin: Body
@@ -359,7 +374,7 @@ views:
       scrollMode: continuous
       lower: -10
       upper: 10
-      visibleElements: [ 0, 1, 2 ]
+      visible_elements: [ 0, 1, 2 ]
   -
     id: 16
     plugin: Body
@@ -376,11 +391,15 @@ views:
     id: 17
     plugin: Body
     class: LinkPropertyView
+  -
+    id: 18
+    plugin: Python
+    class: PythonConsoleView
 toolbars:
   "TimeBar":
-    current_time: 0.538
+    current_time: 0
     min_time: 0
-    max_time: 30
+    max_time: 300
     frame_rate: 1000
     playback_frame_rate: 60
     idle_loop_driven_mode: false
@@ -402,19 +421,7 @@ toolbars:
 Body:
   "BodySelectionManager":
     current_body_item: 8
-    current_link: "HIPS"
-  "EditableSceneBody":
-    editableSceneBodies:
-      -
-        bodyItem: 2
-        show_cm: false
-        show_cm_projection: false
-        show_zmp: false
-      -
-        bodyItem: 8
-        show_cm: false
-        show_cm_projection: false
-        show_zmp: false
+    current_link: "base"
   "KinematicFaultChecker":
     checkJointPositions: true
     angleMargin: 0
@@ -424,6 +431,18 @@ Body:
     targetJoints: all
     checkSelfCollisions: true
     onlyTimeBarRange: false
+  "OperableSceneBody":
+    scene_bodies:
+      -
+        body_item: 2
+        show_cm: false
+        show_cm_projection: false
+        show_zmp: false
+      -
+        body_item: 8
+        show_cm: false
+        show_cm_projection: false
+        show_zmp: false
   "SplineFilterDialog":
     isInputFrameRateSpecified: false
     inputFrameRate: 200
@@ -436,12 +455,12 @@ viewAreas:
     contents:
       type: splitter
       orientation: horizontal
-      sizes: [ 335, 1580 ]
+      sizes: [ 502, 2370 ]
       children:
         -
           type: splitter
           orientation: vertical
-          sizes: [ 512, 512 ]
+          sizes: [ 726, 726 ]
           children:
             -
               type: pane
@@ -453,7 +472,7 @@ viewAreas:
         -
           type: splitter
           orientation: vertical
-          sizes: [ 731, 293 ]
+          sizes: [ 1037, 415 ]
           children:
             -
               type: pane
