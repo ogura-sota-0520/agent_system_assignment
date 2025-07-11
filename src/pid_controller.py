@@ -21,8 +21,8 @@ class PIDController:
 
         # PID parameters
         self.kp = 0.01  # Proportional gain
-        self.ki = 0.001  # Integral gain
-        self.kd = 0.005  # Derivative gain
+        self.ki = 0.0005  # Integral gain
+        self.kd = 0.0025  # Derivative gain
 
         self.prev_error = 0
         self.integral = 0
@@ -148,6 +148,7 @@ class PIDController:
         # Twist メッセージを作成
         twist = Twist()
         # 旋回速度を[-0.3, 0.3]の範囲に制限
+        twist.linear.y = max(-0.06, min(0.06, control_output))  # 前進速度は固定値0.2
         angular_z = control_output  # 負号で方向を調整
         twist.angular.z = max(-0.3, min(0.3, angular_z))
 
