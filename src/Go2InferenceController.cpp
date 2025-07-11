@@ -109,8 +109,7 @@ public:
         // find the cfgs file
         // 設定ファイルcfgs.yamlの読み込み
         // ${HOME}/genesis_ws/logs/go2-walking/inference_tutorial/cfgs.yaml
-        fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/sub2_com_fric0.2-1.8_kp18-30_kv0.7-1.2_rotI0.01-0.15_iter200");
-        // fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/sub2_com_iter300");
+        fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("agent_system_ws/src/agent_system_assignment/model/sub2_com_fric0.2-1.8_kp18-30_kv0.7-1.2_rotI0.01-0.15_iter200");
         fs::path cfgs_path = inference_target_path / fs::path("cfgs.yaml");
         if (!fs::exists(cfgs_path))
         {
