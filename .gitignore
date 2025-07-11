@@ -3,4 +3,13 @@ __pychache__
 
 # Ignore shorttrack project files
 projects/shorttrack
-projects/shorttrack-log/shorttrack
+projects/shorttrack-log/
+projects/shorttrack-log2/
+projects/shorttrack-log3/
+projects/shorttrack-log4/
+projects/shorttrack-log5/
+projects/shorttrack-log.cnoid
+projects/shorttrack-log2.cnoid
+projects/shorttrack-log3.cnoid
+projects/shorttrack-log4.cnoid
+projects/shorttrack-log5.cnoid

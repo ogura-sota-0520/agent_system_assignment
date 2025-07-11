@@ -109,8 +109,7 @@ public:
         // find the cfgs file
         // 設定ファイルcfgs.yamlの読み込み
         // ${HOME}/genesis_ws/logs/go2-walking/inference_tutorial/cfgs.yaml
-        fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/sub2_com_fric0.2-1.8_kp18-30_kv0.7-1.2_rotI0.01-0.15_iter200");
-        // fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("genesis_ws/logs/go2-walking/sub2_com_iter300");
+        fs::path inference_target_path = fs::path(std::getenv("HOME")) / fs::path("agent_system_ws/src/agent_system_assignment/model/sub2_com_fric0.2-1.8_kp18-30_kv0.7-1.2_rotI0.01-0.15_iter200");
         fs::path cfgs_path = inference_target_path / fs::path("cfgs.yaml");
         if (!fs::exists(cfgs_path))
         {
@@ -128,22 +127,12 @@ public:
         auto command_cfg = root->findMapping("command_cfg");
 
         // env_cfg
-        P_gain = env_cfg->get("kp", 20);
-        D_gain = env_cfg->get("kd", 0.5);
-
         P_gain = env_cfg->get("kp", 24);
         D_gain = env_cfg->get("kd", 0.95);
 
-        // 学習データの範囲に合わせて調整
-        // 学習データ: kp=18-30, kv=0.7-1.2
-        if (P_gain < 18.0)
-            P_gain = 18.0;
-        if (P_gain > 30.0)
-            P_gain = 30.0;
-        if (D_gain < 0.7)
-            D_gain = 0.7;
-        if (D_gain > 1.2)
-            D_gain = 1.2;
+        // TODO:
+        P_gain = 35;
+        D_gain = 1.7;
 
         resample_interval_steps = static_cast<int>(std::round(env_cfg->get("resampling_time_s", 4.0) / dt));
 
@@ -301,10 +290,14 @@ public:
         // command[0] = command_velocity.linear.x;
         static double target_speed = 0.1; // 初期速度を低く設定
 
+        // TODO: 最大速度の調整
+        const double max_speed = 0.5; // より安定な最大速度
+
         // 1秒(1000ステップ)毎に速度を少しずつ上げる
-        if (step_count > 0 && step_count % 1000 == 0 && target_speed < 0.3)
+        if (step_count > 0 && step_count % 1000 == 0 && target_speed < max_speed)
         {
-            target_speed += 0.05; // 0.05m/sずつ増加
+            target_speed += 0.05;                             // 0.05m/sずつ増加
+            target_speed = std::min(target_speed, max_speed); // 最大速度を超えないように
         }
 
         command[0] = target_speed;
